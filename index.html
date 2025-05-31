@@ -1,80 +1,24 @@
-<!DOCTYPE html><html lang="hi">
+
+<!DOCTYPE html>
+<html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yojana Update</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yojana Update</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        header { background-color: #007bff; color: white; padding: 10px 20px; text-align: center; }
+        iframe { width: 100%; height: 90vh; border: none; }
+        footer { background-color: #333; color: white; text-align: center; padding: 10px; position: fixed; bottom: 0; width: 100%; }
+    </style>
 </head>
-<body class="bg-gray-100">
-  <header class="bg-green-600 text-white p-4 text-center text-2xl font-bold">
-    योजना अपडेट
-  </header>  <main class="max-w-4xl mx-auto p-4">
-    <input id="searchInput" type="text" placeholder="योजना खोजें..." class="w-full p-2 mb-4 border rounded" /><div class="mb-4">
-  <label class="font-semibold">श्रेणी चुनें:</label>
-  <select id="categoryFilter" class="border p-2 rounded">
-    <option value="">सभी</option>
-  </select>
-</div>
-
-<div id="yojanaList" class="grid gap-4"></div>
-
-  </main>  <script>
-    const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTkBqMzmH6zTSjJ13H16HQM61kxbnI6lSZwi4qIgMKoHbDW6s2RA9vN4Z_T4P95Ldt-7El11rcmjMkm/pub?output=tsv";
-
-    fetch(sheetURL)
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.trim().split("\n");
-        const headers = lines[0].split("\t");
-        const data = lines.slice(1).map(row => {
-          const cells = row.split("\t");
-          return headers.reduce((acc, header, i) => {
-            acc[header] = cells[i] || "";
-            return acc;
-          }, {});
-        });
-
-        const yojanaList = document.getElementById("yojanaList");
-        const categoryFilter = document.getElementById("categoryFilter");
-        const searchInput = document.getElementById("searchInput");
-
-        const categories = [...new Set(data.map(d => d.Category).filter(Boolean))];
-        categories.forEach(cat => {
-          const opt = document.createElement("option");
-          opt.value = cat;
-          opt.textContent = cat;
-          categoryFilter.appendChild(opt);
-        });
-
-        function renderList(filterText = "", filterCat = "") {
-          yojanaList.innerHTML = "";
-          const filtered = data.filter(d =>
-            (!filterText || d.Title?.toLowerCase().includes(filterText.toLowerCase())) &&
-            (!filterCat || d.Category === filterCat)
-          );
-
-          filtered.forEach(d => {
-            const div = document.createElement("div");
-            div.className = "bg-white p-4 rounded shadow";
-            div.innerHTML = `
-              <h2 class="text-xl font-bold">${d.Title}</h2>
-              <p class="mt-2 text-gray-700">${d.Description}</p>
-              ${d.Link ? `<a href="${d.Link}" target="_blank" class="text-blue-500 mt-2 block">विवरण देखें</a>` : ""}
-              ${d.PDF ? `<a href="${d.PDF}" target="_blank" class="text-green-600 mt-2 block">PDF डाउनलोड</a>` : ""}
-            `;
-            yojanaList.appendChild(div);
-          });
-        }
-
-        searchInput.addEventListener("input", () => {
-          renderList(searchInput.value, categoryFilter.value);
-        });
-
-        categoryFilter.addEventListener("change", () => {
-          renderList(searchInput.value, categoryFilter.value);
-        });
-
-        renderList();
-      });
-  </script></body>
+<body>
+    <header>
+        <h1>Yojana Update - सरकारी योजनाएं</h1>
+    </header>
+    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTkBqMzmH6zTSjJ13H16HQM61kxbnI6lSZwi4qIgMKoHbDW6s2RA9vN4Z_T4P95Ldt-7El11rcmjMkm/pubhtml?widget=true&amp;headers=false"></iframe>
+    <footer>
+        &copy; 2025 Yojana Update | Auto Updated Sarkari Yojana News
+    </footer>
+</body>
 </html>
