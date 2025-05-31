@@ -1,57 +1,122 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Yojna Update</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
-    h1 { color: #2c3e50; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-    th { background-color: #007bff; color: white; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background-color: #2196F3;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav {
+      background-color: #1976D2;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+    .search-container {
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: center;
+    }
+    .search-container input {
+      padding: 10px;
+      width: 80%;
+      font-size: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 6px;
+      margin: 15px auto;
+      max-width: 800px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    footer {
+      background-color: #0D47A1;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: fixed;
+      bottom: 0; width: 100%;
+    }
   </style>
 </head>
 <body>
-  <h1>सरकारी योजना अपडेट</h1>
-  <table id="dataTable">
-    <thead><tr id="tableHeader"></tr></thead>
-    <tbody id="tableBody"></tbody>
-  </table>
 
-  <script>
-    const sheetID = "1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw";
-    const sheetName = "Sheet1";
-    const url = `https://opensheet.elk.sh/${sheetID}/${sheetName}`;
+<header>
+  <h1>Yojna Update</h1>
+  <p>भारत सरकार की नई योजनाएं एक ही जगह</p>
+</header>
 
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        const headers = Object.keys(data[0]);
-        const headerRow = document.getElementById("tableHeader");
-        const tableBody = document.getElementById("tableBody");
+<nav>
+  <a href="#">Home</a>
+  <a href="#">Schemes</a>
+  <a href="#">Contact</a>
+</nav>
 
-        headers.forEach(header => {
-          const th = document.createElement("th");
-          th.innerText = header;
-          headerRow.appendChild(th);
-        });
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Search yojnas...">
+</div>
 
-        data.forEach(row => {
-          const tr = document.createElement("tr");
-          headers.forEach(header => {
-            const td = document.createElement("td");
-            td.innerText = row[header];
-            tr.appendChild(td);
-          });
-          tableBody.appendChild(tr);
-        });
-      })
-      .catch(error => {
-        document.getElementById("tableBody").innerHTML =
-          "<tr><td colspan='100%'>डेटा लोड नहीं हो सका। कृपया Sheet ID और शेयर सेटिंग जांचें।</td></tr>";
+<div id="content"></div>
+
+<footer>
+  संपर्क करें: +91-8890784773 | Email: trendingdk2@gmail.com
+</footer>
+
+<script>
+  const sheetID = '1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw';
+  const sheetName = 'Sheet1'; // Update if different
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}`;
+
+  fetch(url)
+    .then(res => res.text())
+    .then(rep => {
+      const data = JSON.parse(rep.substr(47).slice(0, -2));
+      const rows = data.table.rows;
+
+      const contentDiv = document.getElementById('content');
+      contentDiv.innerHTML = '';
+
+      rows.forEach(row => {
+        const title = row.c[0]?.v || '';
+        const description = row.c[1]?.v || '';
+        const link = row.c[2]?.v || '';
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h2>${title}</h2>
+          <p>${description}</p>
+          ${link ? `<a href="${link}" target="_blank">Read More</a>` : ''}
+        `;
+        contentDiv.appendChild(card);
       });
-  </script>
+
+      // Search filter
+      document.getElementById('searchInput').addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+          card.style.display = card.innerText.toLowerCase().includes(searchValue) ? 'block' : 'none';
+        });
+      });
+    });
+</script>
+
 </body>
 </html>
