@@ -1,27 +1,41 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yojana Update</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Yojna Update</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        .yojna { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .yojna h2 { margin: 0 0 10px 0; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>सरकारी योजना अपडेट</h1>
-        <nav>
-            <a href="index.html">होम</a>
-            <a href="yojana.html">सभी योजनाएं</a>
-            <a href="contact.html">संपर्क करें</a>
-        </nav>
-    </header>
-    <main>
-        <h2>आज की प्रमुख योजनाएं</h2>
-        <div id="yojana-list">Loading...</div>
-    </main>
-    <footer>
-        <p>© 2025 Yojana Update</p>
-    </footer>
-    <script src="script.js"></script>
+    <h1>Yojna Update</h1>
+    <div id="yojna-container">Loading...</div>
+
+    <script>
+        fetch("https://spreadsheets.google.com/feeds/list/1ckP6GXewgRHTXinaR9Dz60SLxlLse45TF5nHpLeoZeA/1/public/values?alt=json")
+        .then(response => response.json())
+        .then(data => {
+            const entries = data.feed.entry;
+            const container = document.getElementById("yojna-container");
+            container.innerHTML = "";
+
+            entries.forEach(entry => {
+                const title = entry.gsx$title?.$t || "No Title";
+                const description = entry.gsx$description?.$t || "No Description";
+                const link = entry.gsx$link?.$t || "#";
+
+                const div = document.createElement("div");
+                div.className = "yojna";
+                div.innerHTML = `<h2>${title}</h2><p>${description}</p><a href="${link}" target="_blank">Read More</a>`;
+                container.appendChild(div);
+            });
+        })
+        .catch(error => {
+            document.getElementById("yojna-container").innerText = "Error loading data: " + error;
+        });
+    </script>
 </body>
 </html>
