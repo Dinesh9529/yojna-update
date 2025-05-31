@@ -1,20 +1,49 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yojna Update</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }
-        .scheme-card { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; }
-        a { text-decoration: none; color: #2980b9; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8f8f8;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #00695c;
+        }
+        #scheme-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .scheme-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .scheme-card h2 {
+            margin-top: 0;
+            color: #00796b;
+        }
+        .scheme-card a {
+            background: #00796b;
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>सरकारी योजनाएं अपडेट</h1>
-    <div id="scheme-container"></div>
-    <script type="module" src="app.js"></script>
+    <h1>Yojna Update</h1>
+    <div id="scheme-container">Loading...</div>
+    <script src="app.js"></script>
 </body>
 </html>

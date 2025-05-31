@@ -1,48 +1,22 @@
+fetch("https://opensheet.elk.sh/1ckP6GXewgRHTXinaR9Dz60SLxlLse45TF5nHpLeoZeA/Sheet1")
+  .then(response => response.json())
+  .then(data => {
+    const container = document.getElementById("scheme-container");
+    container.innerHTML = "";
+    data.forEach(row => {
+      const title = row.title || "कोई शीर्षक नहीं";
+      const description = row.description || "विवरण नहीं मिला";
+      const link = row.link || "#";
 
-// Firebase SDK imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-// Your Firebase config
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Fetch schemes from Firestore
-const schemeContainer = document.getElementById("scheme-container");
-
-getDocs(collection(db, "schemes")).then(querySnapshot => {
-  querySnapshot.forEach(doc => {
-    const data = doc.data();
-
-    if (data && data.scheme) {
-      const scheme = data.scheme;
-      const title = scheme.title || "कोई शीर्षक नहीं";
-      const description = scheme.description || "विवरण उपलब्ध नहीं है।";
-      const applyLink = scheme.applyLink || "#";
-
-      const schemeCard = `
+      container.innerHTML += `
         <div class="scheme-card">
           <h2>${title}</h2>
           <p>${description}</p>
-          <a href="${applyLink}" target="_blank">Apply Now</a>
+          <a href="${link}" target="_blank">Apply Now</a>
         </div>
       `;
-
-      schemeContainer.innerHTML += schemeCard;
-    } else {
-      console.warn(`⚠️ Missing 'scheme' data in document: ${doc.id}`);
-    }
+    });
+  })
+  .catch(error => {
+    document.getElementById("scheme-container").innerText = "डेटा लोड करने में त्रुटि: " + error;
   });
-}).catch(error => {
-  console.error("❌ Error loading schemes:", error);
-});
