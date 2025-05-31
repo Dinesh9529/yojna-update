@@ -1,38 +1,33 @@
-
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
 }
-
-.container {
-    padding: 20px;
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-top: 30px;
-    border-radius: 8px;
+header {
+  background: #0074d9;
+  color: white;
+  padding: 1em;
+  text-align: center;
 }
-
-h1 {
-    text-align: center;
-    color: #333;
+nav a {
+  color: white;
+  margin: 0 1em;
+  text-decoration: none;
 }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+main {
+  padding: 1em;
 }
-
-th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
+.yojna-card {
+  background: white;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-
-th {
-    background-color: #f0f0f0;
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 1em;
 }

@@ -1,136 +1,55 @@
-
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yojna Update</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        header, footer {
-            background-color: #1976D2;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-        nav {
-            background-color: #1565C0;
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            gap: 20px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .container {
-            padding: 20px;
-            max-width: 1000px;
-            margin: auto;
-        }
-        .scheme {
-            background: white;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        .scheme a {
-            display: inline-block;
-            margin-top: 10px;
-            text-decoration: none;
-            color: #1976D2;
-            font-weight: bold;
-        }
-        .search-box {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        @media (max-width: 600px) {
-            nav {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yojna Update</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<header>
+  <header>
     <h1>Yojna Update</h1>
-    <p>सरकारी योजनाओं की पूरी जानकारी एक जगह</p>
-</header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
 
-<nav>
-    <a href="index.html">होम</a>
-    <a href="contact.html">संपर्क करें</a>
-    <a href="about.html">हमारे बारे में</a>
-</nav>
+  <main>
+    <h2>Latest Government Schemes</h2>
+    <div id="yojna-container">Loading...</div>
+  </main>
 
-<div class="container">
-    <input type="text" class="search-box" id="searchBox" placeholder="योजना खोजें..." onkeyup="searchSchemes()">
-    <div id="data"></div>
-</div>
+  <footer>
+    <p>&copy; 2025 Yojna Update. All rights reserved.</p>
+  </footer>
 
-<footer>
-    <p>© 2025 Yojna Update | सभी अधिकार सुरक्षित</p>
-</footer>
-
-<script>
+  <script>
     const sheetID = "1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw";
-    const base = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`;
-    const query = encodeURIComponent("Select *");
-    const url = base + "&tq=" + query;
+    const url = `https://opensheet.elk.sh/${sheetID}/Sheet1?t=${new Date().getTime()}`;
 
     fetch(url)
-        .then(res => res.text())
-        .then(rep => {
-            const data = JSON.parse(rep.substr(47).slice(0, -2));
-            const colz = [];
-            const dataDiv = document.getElementById('data');
-            let html = '';
-
-            data.table.cols.forEach(heading => {
-                if (heading.label) colz.push(heading.label.toLowerCase());
-            });
-
-            data.table.rows.forEach(rowData => {
-                let row = {};
-                rowData.c.forEach((el, j) => {
-                    if (el != null) {
-                        row[colz[j]] = el.v;
-                    }
-                });
-                html += `<div class="scheme">
-                    <h3>${row['title'] || 'शीर्षक नहीं मिला'}</h3>
-                    <p>${row['description'] || ''}</p>
-                    <a href="${row['link']}" target="_blank">👉 पूरी जानकारी पढ़ें</a>
-                    <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(row['title'] + ' - ' + row['link'])}" target="_blank">📤 शेयर करें</a>
-                </div>`;
-            });
-
-            dataDiv.innerHTML = html;
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("yojna-container");
+        container.innerHTML = "";
+        data.forEach(row => {
+          const div = document.createElement("div");
+          div.className = "yojna-card";
+          div.innerHTML = `
+            <h3>${row.Title}</h3>
+            <p>${row.Description}</p>
+            <a href="${row.Link}" target="_blank">Read More</a>
+            <button onclick="navigator.share({title: '${row.Title}', url: '${row.Link}'})">Share</button>
+          `;
+          container.appendChild(div);
         });
-
-    function searchSchemes() {
-        const input = document.getElementById('searchBox').value.toLowerCase();
-        const schemes = document.querySelectorAll('.scheme');
-        schemes.forEach(el => {
-            const text = el.innerText.toLowerCase();
-            el.style.display = text.includes(input) ? '' : 'none';
-        });
-    }
-</script>
-
+      })
+      .catch(err => {
+        document.getElementById("yojna-container").innerText = "Failed to load data.";
+        console.error(err);
+      });
+  </script>
 </body>
 </html>
