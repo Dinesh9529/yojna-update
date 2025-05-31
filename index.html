@@ -2,21 +2,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yojna Update</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yojna Update</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+    h1 { color: #2c3e50; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background-color: #007bff; color: white; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>सरकारी योजनाएं - Yojna Update</h1>
-        <table id="data-table">
-            <thead>
-                <tr id="table-headers"></tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-        </table>
-    </div>
-    <script src="script.js"></script>
+  <h1>सरकारी योजना अपडेट</h1>
+  <table id="dataTable">
+    <thead><tr id="tableHeader"></tr></thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script>
+    const sheetID = "1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw";
+    const sheetName = "Sheet1";
+    const url = `https://opensheet.elk.sh/${sheetID}/${sheetName}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const headers = Object.keys(data[0]);
+        const headerRow = document.getElementById("tableHeader");
+        const tableBody = document.getElementById("tableBody");
+
+        headers.forEach(header => {
+          const th = document.createElement("th");
+          th.innerText = header;
+          headerRow.appendChild(th);
+        });
+
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          headers.forEach(header => {
+            const td = document.createElement("td");
+            td.innerText = row[header];
+            tr.appendChild(td);
+          });
+          tableBody.appendChild(tr);
+        });
+      })
+      .catch(error => {
+        document.getElementById("tableBody").innerHTML =
+          "<tr><td colspan='100%'>डेटा लोड नहीं हो सका। कृपया Sheet ID और शेयर सेटिंग जांचें।</td></tr>";
+      });
+  </script>
 </body>
 </html>
