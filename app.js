@@ -1,22 +1,15 @@
+
 fetch("https://opensheet.elk.sh/1ckP6GXewgRHTXinaR9Dz60SLxlLse45TF5nHpLeoZeA/Sheet1")
   .then(response => response.json())
   .then(data => {
-    const container = document.getElementById("scheme-container");
-    container.innerHTML = "";
-    data.forEach(row => {
-      const title = row.title || "कोई शीर्षक नहीं";
-      const description = row.description || "विवरण नहीं मिला";
-      const link = row.link || "#";
-
-      container.innerHTML += `
-        <div class="scheme-card">
-          <h2>${title}</h2>
-          <p>${description}</p>
-          <a href="${link}" target="_blank">Apply Now</a>
-        </div>
-      `;
+    const container = document.getElementById("yojna-list");
+    data.forEach((row, index) => {
+      const item = document.createElement("div");
+      item.innerHTML = `<h3>${index + 1}. ${row.Title}</h3><p>${row.Description}</p><a href="${row.Link}" target="_blank">लिंक खोलें</a><hr>`;
+      container.appendChild(item);
     });
   })
   .catch(error => {
-    document.getElementById("scheme-container").innerText = "डेटा लोड करने में त्रुटि: " + error;
+    document.getElementById("yojna-list").innerText = "डेटा लोड नहीं हो पाया।";
+    console.error("Error fetching data:", error);
   });
