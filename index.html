@@ -2,121 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yojna Update</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f5f5f5;
-    }
-    header {
-      background-color: #2196F3;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    nav {
-      background-color: #1976D2;
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 10px;
-      font-weight: bold;
-    }
-    .search-container {
-      margin: 20px auto;
-      max-width: 600px;
-      text-align: center;
-    }
-    .search-container input {
-      padding: 10px;
-      width: 80%;
-      font-size: 16px;
-    }
-    .card {
-      background: white;
-      border-radius: 6px;
-      margin: 15px auto;
-      max-width: 800px;
-      padding: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    footer {
-      background-color: #0D47A1;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      position: fixed;
-      bottom: 0; width: 100%;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header>
+    <h1>Yojna Update</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
 
-<header>
-  <h1>Yojna Update</h1>
-  <p>भारत सरकार की नई योजनाएं एक ही जगह</p>
-</header>
+  <main>
+    <h2>Latest Government Schemes</h2>
+    <div id="yojna-container">Loading...</div>
+  </main>
 
-<nav>
-  <a href="#">Home</a>
-  <a href="#">Schemes</a>
-  <a href="#">Contact</a>
-</nav>
+  <footer>
+    <p>&copy; 2025 Yojna Update. All rights reserved.</p>
+  </footer>
 
-<div class="search-container">
-  <input type="text" id="searchInput" placeholder="Search yojnas...">
-</div>
+  <script>
+    const sheetID = "1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw";
+    const url = `https://opensheet.elk.sh/${sheetID}/Sheet1?t=${new Date().getTime()}`;
 
-<div id="content"></div>
-
-<footer>
-  संपर्क करें: | Email: trendingdk2@gmail.com
-</footer>
-
-<script>
-  const sheetID = '1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw';
-  const sheetName = 'Sheet1'; // Update if different
-  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}`;
-
-  fetch(url)
-    .then(res => res.text())
-    .then(rep => {
-      const data = JSON.parse(rep.substr(47).slice(0, -2));
-      const rows = data.table.rows;
-
-      const contentDiv = document.getElementById('content');
-      contentDiv.innerHTML = '';
-
-      rows.forEach(row => {
-        const title = row.c[0]?.v || '';
-        const description = row.c[1]?.v || '';
-        const link = row.c[2]?.v || '';
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h2>${title}</h2>
-          <p>${description}</p>
-          ${link ? `<a href="${link}" target="_blank">Read More</a>` : ''}
-        `;
-        contentDiv.appendChild(card);
-      });
-
-      // Search filter
-      document.getElementById('searchInput').addEventListener('input', function () {
-        const searchValue = this.value.toLowerCase();
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-          card.style.display = card.innerText.toLowerCase().includes(searchValue) ? 'block' : 'none';
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("yojna-container");
+        container.innerHTML = "";
+        data.forEach(row => {
+          const div = document.createElement("div");
+          div.className = "yojna-card";
+          div.innerHTML = `
+            <h3>${row.Title}</h3>
+            <p>${row.Description}</p>
+            <a href="${row.Link}" target="_blank">Read More</a>
+            <button onclick="navigator.share({title: '${row.Title}', url: '${row.Link}'})">Share</button>
+          `;
+          container.appendChild(div);
         });
+      })
+      .catch(err => {
+        document.getElementById("yojna-container").innerText = "Failed to load data.";
+        console.error(err);
       });
-    });
-</script>
-
+  </script>
 </body>
 </html>
