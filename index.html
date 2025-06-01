@@ -1,54 +1,120 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yojna Update</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>सरकारी योजना अपडेट</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+    header, footer {
+      background: #006699;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    .container {
+      padding: 1rem;
+    }
+    .yojna {
+      background: white;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .yojna h3 {
+      margin-top: 0;
+      color: #006699;
+    }
+    .yojna a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #007BFF;
+      text-decoration: none;
+    }
+    .yojna a:hover {
+      text-decoration: underline;
+    }
+    nav {
+      background: #004466;
+      padding: 0.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Yojna Update</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+    <h1>सरकारी योजना अपडेट</h1>
   </header>
-
-  <main>
-    <h2>Latest Government Schemes</h2>
-    <div id="yojna-container">Loading...</div>
-  </main>
-
+  <nav>
+    <a href="#yojna-container">योजनाएँ</a>
+    <a href="#contact">संपर्क करें</a>
+    <a href="#about">हमारे बारे में</a>
+  </nav>
+  <div class="container" id="yojna-container">
+    <p>लोड हो रहा है...</p>
+  </div>
+  <div class="container" id="contact">
+    <h2>संपर्क करें</h2>
+    <p>ईमेल: support@yojnaupdate.in</p>
+    <p>फोन: 1234567890</p>
+  </div>
+  <div class="container" id="about">
+    <h2>हमारे बारे में</h2>
+    <p>यह वेबसाइट भारत सरकार की नई योजनाओं की जानकारी देने के लिए बनाई गई है।</p>
+  </div>
   <footer>
-    <p>&copy; 2025 Yojna Update. All rights reserved.</p>
+    &copy; 2025 Yojna Update. सर्वाधिकार सुरक्षित।
   </footer>
 
   <script>
-    const sheetID = "1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw";
-    const url = `https://opensheet.elk.sh/${sheetID}/Sheet1?t=${new Date().getTime()}`;
+    fetch('https://docs.google.com/spreadsheets/d/1MmKfvt4h7HxEEgsZtZ7Iv8oIQONVZu_vNUBPX4TAbdw/gviz/tq?tqx=out:json')
+      .then(res => res.text())
+      .then(rep => {
+        const jsonData = JSON.parse(rep.substr(47).slice(0, -2));
+        const rows = jsonData.table.rows;
 
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById("yojna-container");
-        container.innerHTML = "";
-        data.forEach(row => {
-          const div = document.createElement("div");
-          div.className = "yojna-card";
-          div.innerHTML = `
-            <h3>${row.Title}</h3>
-            <p>${row.Description}</p>
-            <a href="${row.Link}" target="_blank">Read More</a>
-            <button onclick="navigator.share({title: '${row.Title}', url: '${row.Link}'})">Share</button>
-          `;
-          container.appendChild(div);
+        let html = '';
+        rows.forEach(row => {
+          try {
+            const title = row.c[0]?.v || '';
+            const description = row.c[1]?.v || '';
+            const link = row.c[2]?.v || '#';
+
+            html += `
+              <div class="yojna">
+                <h3>${title}</h3>
+                <p>${description}</p>
+                <a href="${link}" target="_blank">पढ़ें पूरी योजना</a>
+              </div>
+            `;
+          } catch (e) {
+            console.error("Error in row", e);
+          }
         });
+
+        document.getElementById('yojna-container').innerHTML = html || '<p>कोई योजना उपलब्ध नहीं है।</p>';
       })
       .catch(err => {
-        document.getElementById("yojna-container").innerText = "Failed to load data.";
-        console.error(err);
+        console.error("Fetching Google Sheet failed:", err);
+        document.getElementById('yojna-container').innerHTML = '<p>डेटा लोड नहीं हो पाया। कृपया बाद में प्रयास करें।</p>';
       });
   </script>
 </body>
